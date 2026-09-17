@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Actions\SendWhatsAppBulkAction;
 use App\Filament\Resources\RefundOrdersResource\Pages;
-use App\Filament\Resources\RefundOrdersResource\RelationManagers\ItemsReletionManager;
+use App\Filament\Resources\RefundOrdersResource\RelationManagers\ItemsRelationManager;
 use App\Models\Order;
 use App\Models\Customer;
 use App\Models\Address;
@@ -136,7 +136,7 @@ class RefundOrdersResource extends Resource
     public static function getRelations(): array
     {
         return [
-            ItemsReletionManager::class,
+            ItemsRelationManager::class,
         ];
     }
 

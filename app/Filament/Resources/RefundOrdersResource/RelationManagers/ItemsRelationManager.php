@@ -13,7 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ItemsReletionManager extends RelationManager
+class ItemsRelationManager extends RelationManager
 {
     protected static string $relationship = 'items';
 
