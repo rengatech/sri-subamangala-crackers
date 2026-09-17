@@ -9,14 +9,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->string('whatsapp_number')->nullable()->after('mobile_number');
+            if (!Schema::hasColumn('customers', 'whatsapp_number')) {
+                $table->string('whatsapp_number')->nullable()->after('mobile_number');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->dropColumn('whatsapp_number');
+            if (Schema::hasColumn('customers', 'whatsapp_number')) {
+                $table->dropColumn('whatsapp_number');
+            }
         });
     }
 };
