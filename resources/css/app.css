@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+@source "../../vendor/filament/**/*.blade.php";
+
+@theme {
+    --color-brand-red: #800020;
+    --color-brand-red-hover: #5e0017;
+    --color-brand-maroon: #991b1b;
+    --color-brand-dark: #111111;
+    --color-brand-gray: #444444;
+    --color-brand-light: #f8f9fa;
+
+    --font-sans: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-heading: 'Raleway', ui-sans-serif, system-ui, sans-serif;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.animate-marquee {
+    animation: marquee 40s linear infinite;
+}
+
+/* Fade up entrance */
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-up {
+    animation: fade-up 0.5s ease-out both;
+}
+
+/* Staggered product rows */
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-slide-in {
+    animation: slide-in 0.3s ease-out both;
+}
+
+/* Gentle pulse for floating buttons */
+@keyframes soft-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    }
+
+    50% {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+}
+
+.animate-soft-pulse {
+    animation: soft-pulse 3s ease-in-out infinite;
+}
+
+/* Pop for ADD button */
+@keyframes pop {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.animate-pop {
+    animation: pop 0.25s ease-out;
+}
+
+/* Accordion slide down */
+.accordion-enter-active {
+    transition: max-height 0.35s ease-out, opacity 0.3s ease-out;
+    overflow: hidden;
+}
+
+.accordion-leave-active {
+    transition: max-height 0.25s ease-in, opacity 0.2s ease-in;
+    overflow: hidden;
+}
+
+.accordion-enter-from,
+.accordion-leave-to {
+    max-height: 0;
+    opacity: 0;
+}
+
+.accordion-enter-to,
+.accordion-leave-from {
+    max-height: 2000px;
+    opacity: 1;
+}
+
+/* Image hover zoom */
+.img-hover-zoom {
+    overflow: hidden;
+}
+
+.img-hover-zoom img {
+    transition: transform 0.3s ease;
+}
+
+.img-hover-zoom:hover img {
+    transform: scale(1.05);
+}
+
+/* Hero shimmer */
+@keyframes shimmer {
+    0% {
+        background-position: -200% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+.animate-shimmer {
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.08) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 4s linear infinite;
+}
+
+/* Bounce in for floating buttons */
+@keyframes bounce-in {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    70% {
+        transform: scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-bounce-in {
+    animation: bounce-in 0.5s ease-out both;
+}
+
+/* Cart wiggle on item change */
+@keyframes cart-wiggle {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    20% {
+        transform: rotate(-12deg);
+    }
+
+    40% {
+        transform: rotate(10deg);
+    }
+
+    60% {
+        transform: rotate(-6deg);
+    }
+
+    80% {
+        transform: rotate(3deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+.animate-cart-wiggle {
+    animation: cart-wiggle 0.4s ease-in-out;
+}
+
+@keyframes blink-color {
+
+    0%,
+    100% {
+        color: #dc2626;
+    }
+
+    33% {
+        color: #16a34a;
+    }
+
+    66% {
+        color: #2563eb;
+    }
+}
+
+@keyframes text-grow {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+}
+
+.animate-blink-color {
+    display: block;
+}
+
+.animate-blink-color {
+    animation: none;
+}
+
+.animate-blink-color span {
+    display: inline-block;
+    animation: blink-color 1s ease-in-out infinite, text-grow 1s ease-in-out infinite;
+}

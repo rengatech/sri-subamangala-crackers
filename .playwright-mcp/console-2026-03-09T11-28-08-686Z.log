@@ -1,0 +1,2 @@
+[    1522ms] [ERROR] Error: <line> attribute x1: Expected length, "undefined". @ http://[::1]:5173/node_modules/.vite/deps/motion_react.js?v=8cf2a8bb:5581
+[    1522ms] [ERROR] Error: <line> attribute x2: Expected length, "undefined". @ http://[::1]:5173/node_modules/.vite/deps/motion_react.js?v=8cf2a8bb:5581
