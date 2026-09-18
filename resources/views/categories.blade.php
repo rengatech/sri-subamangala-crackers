@@ -130,11 +130,11 @@
             @endif
 
             <!-- Mobile number on top-right -->
-            <div class="mobile">Mob No : {{ $settings->mobile_number_1 }} </div>
+            <div class="mobile">Mob No : {{ $settings->mobile_numbers[0] ?? '' }} </div>
             <div class="company-name">{{ strtoupper($settings->company_name) }}</div>
             <div class="sub-heading">Fireworks Wholesale & Retail Sales</div>
             <div class="address"> {{ $settings->company_address }}<br>
-                PH: {{ $settings->mobile_number_1 }}<br>
+                PH: {{ $settings->mobile_numbers[0] ?? '' }}<br>
                 Email: {{ $settings->email_id }}<br>
                 Website: {{ $settings->website }} </div>
         </div>

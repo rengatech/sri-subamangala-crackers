@@ -82,7 +82,7 @@ class OrderController extends Controller
         $order['global_discount'] = $settings->global_discount;
         $order['Company_address'] = $settings->company_address;
         $order['Company_name'] = $settings->company_name;
-        $order['mobile_number_1'] = $settings->mobile_number_1;
+        $order['mobile_number_1'] = $settings->mobile_numbers[0] ?? '';
 
         Pdf::loadView('orders.download', $order)
             ->save(storage_path('app/public/order-pdf/') . $pdf_name);
@@ -128,7 +128,7 @@ class OrderController extends Controller
         $order['global_discount'] = $settings->global_discount;
         $order['Company_address'] = $settings->company_address;
         $order['Company_name'] = $settings->company_name;
-        $order['mobile_number_1'] = $settings->mobile_number_1;
+        $order['mobile_number_1'] = $settings->mobile_numbers[0] ?? '';
 
 
         $pdf = Pdf::loadView('orders.download', $order);

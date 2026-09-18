@@ -9,11 +9,7 @@ const props = defineProps({
     globalDiscount: { type: Number, default: 0 },
     minOrderValue: { type: Number, default: 0 },
     company_address: String,
-    mobile_number_1: Number,
-    mobile_number_2: Number,
-    mobile_number_3: Number,
-    mobile_number_4: Number,
-    mobile_number_5: Number,
+    mobile_numbers: Array,
 })
 
 defineEmits(['contact-click', 'scroll-to-checkout'])
@@ -45,11 +41,7 @@ const scrollToCheckout = () => {
         </main>
         <Footer
             :company_address="company_address"
-            :mobile_number_1="mobile_number_1"
-            :mobile_number_2="mobile_number_2"
-            :mobile_number_3="mobile_number_3"
-            :mobile_number_4="mobile_number_4"
-            :mobile_number_5="mobile_number_5"
+            :mobile_numbers="mobile_numbers"
         />
 
         <!-- WhatsApp Chat Icon (fixed bottom-left) -->

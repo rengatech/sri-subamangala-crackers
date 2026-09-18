@@ -107,7 +107,7 @@
             </div>
             <div class="company-details">
                 <h3>{{ $settings->company_name ?? 'Sri Subamangala Crackers' }}</h3>
-                <p><strong>Mobile:</strong> {{ $settings->mobile_number_1 }}</p>
+                <p><strong>Mobile:</strong> {{ $settings->mobile_numbers[0] ?? '' }}</p>
                 @if($settings->company_address)
                     <p style="white-space: pre-wrap; font-size: 14px; max-width: 250px; margin-left: auto;">
                         {{ $settings->company_address }}</p>

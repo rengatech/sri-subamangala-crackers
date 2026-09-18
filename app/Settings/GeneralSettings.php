@@ -15,20 +15,12 @@ class GeneralSettings extends Settings
     public string $email_id;
     public string $website;
     public ?string $logo;
-    public string $mobile_number_1;
-    public string $mobile_number_2;
-    public string $mobile_number_3;
-    public string $mobile_number_4;
-    public string $mobile_number_5;
+    public array $mobile_numbers = [];
+    public string $whatsapp_number;
     public string $marquee_content;
 
     public static function group(): string
     {
         return 'general';
     }
-
-
-
-
 }
-

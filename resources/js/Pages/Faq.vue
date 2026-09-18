@@ -5,11 +5,7 @@ import { ref } from 'vue'
 
 const props = defineProps({
     company_address: String,
-    mobile_number_1: Number,
-    mobile_number_2: Number,
-    mobile_number_3: Number,
-    mobile_number_4: Number,
-    mobile_number_5: Number,
+    mobile_numbers: Array,
 })
 
 const showContactModal = ref(false)
@@ -122,11 +118,7 @@ const faqs = [
 
     <AppLayout
         :company_address="company_address"
-        :mobile_number_1="mobile_number_1"
-        :mobile_number_2="mobile_number_2"
-        :mobile_number_3="mobile_number_3"
-        :mobile_number_4="mobile_number_4"
-        :mobile_number_5="mobile_number_5"
+        :mobile_numbers="mobile_numbers"
         @contact-click="showContactModal = true"
     >
         <!-- Contact Modal -->
@@ -142,11 +134,7 @@ const faqs = [
                 <div class="mx-4 w-full max-w-sm rounded-xl bg-white p-6 text-center shadow-xl">
                     <h3 class="mb-4 font-heading text-lg font-bold text-brand-red">Contact Numbers</h3>
                     <div class="space-y-3">
-                        <a v-if="mobile_number_1" :href="`tel:+91${mobile_number_1}`" class="block rounded-lg bg-gray-50 px-4 py-2.5 text-sm font-semibold text-brand-dark hover:bg-red-50 hover:text-brand-red">+91 {{ mobile_number_1 }}</a>
-                        <a v-if="mobile_number_2" :href="`tel:+91${mobile_number_2}`" class="block rounded-lg bg-gray-50 px-4 py-2.5 text-sm font-semibold text-brand-dark hover:bg-red-50 hover:text-brand-red">+91 {{ mobile_number_2 }}</a>
-                        <a v-if="mobile_number_3" :href="`tel:+91${mobile_number_3}`" class="block rounded-lg bg-gray-50 px-4 py-2.5 text-sm font-semibold text-brand-dark hover:bg-red-50 hover:text-brand-red">+91 {{ mobile_number_3 }}</a>
-                        <a v-if="mobile_number_4" :href="`tel:+91${mobile_number_4}`" class="block rounded-lg bg-gray-50 px-4 py-2.5 text-sm font-semibold text-brand-dark hover:bg-red-50 hover:text-brand-red">+91 {{ mobile_number_4 }}</a>
-                        <a v-if="mobile_number_5" :href="`tel:+91${mobile_number_5}`" class="block rounded-lg bg-gray-50 px-4 py-2.5 text-sm font-semibold text-brand-dark hover:bg-red-50 hover:text-brand-red">+91 {{ mobile_number_5 }}</a>
+                        <a v-for="(number, idx) in mobile_numbers" :key="idx" :href="`tel:+91${number}`" class="block rounded-lg bg-gray-50 px-4 py-2.5 text-sm font-semibold text-brand-dark hover:bg-red-50 hover:text-brand-red">+91 {{ number }}</a>
                     </div>
                     <button @click="showContactModal = false" class="mt-4 text-sm text-gray-400 hover:text-gray-600">Close</button>
                 </div>

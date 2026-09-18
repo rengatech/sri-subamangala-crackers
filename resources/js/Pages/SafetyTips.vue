@@ -3,11 +3,7 @@ import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
 defineProps({
-    mobile_number_1: String,
-    mobile_number_2: String,
-    mobile_number_3: String,
-    mobile_number_4: String,
-    mobile_number_5: String,
+    mobile_numbers: Array,
     company_address: String,
 })
 
@@ -48,11 +44,7 @@ const safetyTips = [
 <template>
     <AppLayout
         :company_address="company_address"
-        :mobile_number_1="mobile_number_1"
-        :mobile_number_2="mobile_number_2"
-        :mobile_number_3="mobile_number_3"
-        :mobile_number_4="mobile_number_4"
-        :mobile_number_5="mobile_number_5"
+        :mobile_numbers="mobile_numbers"
     >
         <Head title="Safety Tips - Sri Subamangala Crackers" />
 

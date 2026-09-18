@@ -39,11 +39,7 @@ Route::get('/', function (GeneralSettings $settings) {
             'global_discount' => $settings->global_discount,
             'starting_year' => $settings->starting_year,
             'min_order_value' => $settings->min_order_value,
-            'mobile_number_1' => $settings->mobile_number_1,
-            'mobile_number_2' => $settings->mobile_number_2,
-            'mobile_number_3' => $settings->mobile_number_3,
-            'mobile_number_4' => $settings->mobile_number_4,
-            'mobile_number_5' => $settings->mobile_number_5,
+            'mobile_numbers' => $settings->mobile_numbers,
             'marquee_content' => $settings->marquee_content,
             'company_address' => $settings->company_address,
 
@@ -73,7 +69,6 @@ Route::get('/thankyou/{order}', function (Order $order, GeneralSettings $setting
 
     return Inertia::render('Thankyou', [
         'order' => $order,
-        'mobile_number_1' => $settings->mobile_number_1,
         'company_address' => $settings->company_address,
         'global_discount' => $settings->global_discount,
         'download_link' => route('admin.orders.download', $order->id),
@@ -90,11 +85,7 @@ Route::get('/about', function (GeneralSettings $settings) {
             'about_page' => AboutPage::all(),
             'categories' => Category::with('products')->get(),
             'min_order_value' => $settings->min_order_value,
-            'mobile_number_1' => $settings->mobile_number_1,
-            'mobile_number_2' => $settings->mobile_number_2,
-            'mobile_number_3' => $settings->mobile_number_3,
-            'mobile_number_4' => $settings->mobile_number_4,
-            'mobile_number_5' => $settings->mobile_number_5,
+            'mobile_numbers' => $settings->mobile_numbers,
             'company_address' => $settings->company_address,
         ]
     );
@@ -104,11 +95,7 @@ Route::get('/contact', function (GeneralSettings $settings) {
     return Inertia::render(
         'Contact',
         [
-            'mobile_number_1' => $settings->mobile_number_1,
-            'mobile_number_2' => $settings->mobile_number_2,
-            'mobile_number_3' => $settings->mobile_number_3,
-            'mobile_number_4' => $settings->mobile_number_4,
-            'mobile_number_5' => $settings->mobile_number_5,
+            'mobile_numbers' => $settings->mobile_numbers,
             'company_address' => $settings->company_address,
 
         ]
@@ -119,11 +106,7 @@ Route::post('/contact-form', [ContactController::class, 'saveContact'])->name('c
 
 Route::get('/faq', function (GeneralSettings $settings) {
     return Inertia::render('Faq', [
-        'mobile_number_1' => $settings->mobile_number_1,
-        'mobile_number_2' => $settings->mobile_number_2,
-        'mobile_number_3' => $settings->mobile_number_3,
-        'mobile_number_4' => $settings->mobile_number_4,
-        'mobile_number_5' => $settings->mobile_number_5,
+        'mobile_numbers' => $settings->mobile_numbers,
         'company_address' => $settings->company_address,
     ]);
 })->name('faq');
@@ -136,22 +119,14 @@ Route::get('/blog/{slug}', function () {
 
 Route::get('/safety-tips', function (GeneralSettings $settings) {
     return Inertia::render('SafetyTips', [
-        'mobile_number_1' => $settings->mobile_number_1,
-        'mobile_number_2' => $settings->mobile_number_2,
-        'mobile_number_3' => $settings->mobile_number_3,
-        'mobile_number_4' => $settings->mobile_number_4,
-        'mobile_number_5' => $settings->mobile_number_5,
+        'mobile_numbers' => $settings->mobile_numbers,
         'company_address' => $settings->company_address,
     ]);
 })->name('safety-tips');
 
 Route::get('/privacy-policy', function (GeneralSettings $settings) {
     return Inertia::render('PrivacyPolicy', [
-        'mobile_number_1' => $settings->mobile_number_1,
-        'mobile_number_2' => $settings->mobile_number_2,
-        'mobile_number_3' => $settings->mobile_number_3,
-        'mobile_number_4' => $settings->mobile_number_4,
-        'mobile_number_5' => $settings->mobile_number_5,
+        'mobile_numbers' => $settings->mobile_numbers,
         'company_address' => $settings->company_address,
     ]);
 })->name('privacy-policy');

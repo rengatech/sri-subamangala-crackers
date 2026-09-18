@@ -5,7 +5,6 @@ import { computed } from 'vue'
 
 const props = defineProps({
     order: Object,
-    mobile_number_1: String,
     company_address: String,
     global_discount: Number,
     download_link: String,

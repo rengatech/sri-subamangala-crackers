@@ -6,6 +6,7 @@ use App\Settings\GeneralSettings;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Schema;
 
 
@@ -59,22 +60,25 @@ class Settings extends SettingsPage
                 ->image()
                 ->directory('settings'),
 
-            TextInput::make('mobile_number_1')
-                ->label('Mobile Number 1')
-                ->required(),
-            TextInput::make('mobile_number_2')
-                ->label('Mobile Number 2')
-                ->required(),
-            TextInput::make('mobile_number_3')
-                ->label('Mobile Number 3')
-                ->required(),
-            TextInput::make('mobile_number_4')
-                ->label('Mobile Number 4')
-                ->required(),
+            Repeater::make('mobile_numbers')
+                ->label('Mobile Numbers')
+                ->simple(
+                    TextInput::make('number')
+                        ->label('Mobile Number')
+                        ->tel()
+                        ->required()
+                )
+                ->addActionLabel('+ Add Mobile Number')
+                ->reorderable(false)
+                ->minItems(1)
+                ->required()
+                ->columnSpanFull(),
 
-            TextInput::make('mobile_number_5')
-                ->label('Mobile Number 5')
-                ->required(),
+            TextInput::make('whatsapp_number')
+                ->label('WhatsApp Number')
+                ->tel()
+                ->required()
+                ->helperText('Include country code, e.g. 919876543210 (used for click-to-chat links)'),
 
             Textarea::make('marquee_content')
                 ->label('Marquee Content')
