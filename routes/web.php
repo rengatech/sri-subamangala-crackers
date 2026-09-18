@@ -42,6 +42,7 @@ Route::get('/', function (GeneralSettings $settings) {
             'mobile_numbers' => $settings->mobile_numbers,
             'marquee_content' => $settings->marquee_content,
             'company_address' => $settings->company_address,
+            'whatsapp_number' => $settings->whatsapp_number,
 
         ]
     );
@@ -87,6 +88,7 @@ Route::get('/about', function (GeneralSettings $settings) {
             'min_order_value' => $settings->min_order_value,
             'mobile_numbers' => $settings->mobile_numbers,
             'company_address' => $settings->company_address,
+            'whatsapp_number' => $settings->whatsapp_number,
         ]
     );
 })->name('about');
@@ -97,6 +99,7 @@ Route::get('/contact', function (GeneralSettings $settings) {
         [
             'mobile_numbers' => $settings->mobile_numbers,
             'company_address' => $settings->company_address,
+            'whatsapp_number' => $settings->whatsapp_number,
 
         ]
     );
@@ -108,6 +111,7 @@ Route::get('/faq', function (GeneralSettings $settings) {
     return Inertia::render('Faq', [
         'mobile_numbers' => $settings->mobile_numbers,
         'company_address' => $settings->company_address,
+        'whatsapp_number' => $settings->whatsapp_number,
     ]);
 })->name('faq');
 
@@ -121,6 +125,7 @@ Route::get('/safety-tips', function (GeneralSettings $settings) {
     return Inertia::render('SafetyTips', [
         'mobile_numbers' => $settings->mobile_numbers,
         'company_address' => $settings->company_address,
+        'whatsapp_number' => $settings->whatsapp_number,
     ]);
 })->name('safety-tips');
 
@@ -128,6 +133,7 @@ Route::get('/privacy-policy', function (GeneralSettings $settings) {
     return Inertia::render('PrivacyPolicy', [
         'mobile_numbers' => $settings->mobile_numbers,
         'company_address' => $settings->company_address,
+        'whatsapp_number' => $settings->whatsapp_number,
     ]);
 })->name('privacy-policy');
 

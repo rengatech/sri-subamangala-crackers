@@ -10,6 +10,7 @@ const props = defineProps({
     minOrderValue: { type: Number, default: 0 },
     company_address: String,
     mobile_numbers: Array,
+    whatsapp_number: String,
 })
 
 defineEmits(['contact-click', 'scroll-to-checkout'])
@@ -46,7 +47,8 @@ const scrollToCheckout = () => {
 
         <!-- WhatsApp Chat Icon (fixed bottom-left) -->
         <a
-            href="https://wa.me/919003660673"
+            v-if="whatsapp_number"
+            :href="`https://wa.me/91${whatsapp_number}`"
             target="_blank"
             class="animate-bounce-in animate-soft-pulse fixed bottom-6 left-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 shadow-lg transition-transform hover:scale-110"
         >
