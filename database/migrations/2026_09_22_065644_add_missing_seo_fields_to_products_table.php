@@ -11,9 +11,15 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->string('url_slug')->nullable();
-            $table->string('seo_title')->nullable();
-            $table->text('description')->nullable();
+            if (!Schema::hasColumn('products', 'url_slug')) {
+                $table->string('url_slug')->nullable();
+            }
+            if (!Schema::hasColumn('products', 'seo_title')) {
+                $table->string('seo_title')->nullable();
+            }
+            if (!Schema::hasColumn('products', 'description')) {
+                $table->text('description')->nullable();
+            }
         });
     }
 
@@ -23,7 +29,11 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn(['url_slug', 'seo_title', 'description']);
+            $columns = ['url_slug', 'seo_title', 'description'];
+            $existing = array_filter($columns, fn ($col) => Schema::hasColumn('products', $col));
+            if (!empty($existing)) {
+                $table->dropColumn($existing);
+            }
         });
     }
 };
