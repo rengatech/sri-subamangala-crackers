@@ -88,7 +88,11 @@ class ProductResource extends Resource
                     ->searchable()
                     ->required(),
 
-                FileUpload::make('image')->image()
+                FileUpload::make('image')
+                    ->image()
+                    ->directory('products')
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg', 'image/webp'])
+                    ->maxSize(2048)
                     ->required(),
 
             ]);
