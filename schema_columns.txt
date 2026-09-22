@@ -1,0 +1,15 @@
+[
+    "id",
+    "tamil_name",
+    "name",
+    "price",
+    "price_tiers",
+    "unit",
+    "image",
+    "category_id",
+    "sort_order",
+    "created_at",
+    "updated_at",
+    "deleted_at",
+    "pdf"
+]

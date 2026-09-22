@@ -27,7 +27,7 @@ class AllProductResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
@@ -38,44 +38,54 @@ class AllProductResource extends Resource
         return $schema
             ->schema([
                 Forms\Components\TextInput::make('tamil_name')
-                ->required()
-                ->maxLength(255),
-            Forms\Components\TextInput::make('name')
-                ->required()
-                ->maxLength(255)
-                ->reactive()
-                ->afterStateUpdated(function (\Filament\Forms\Set $set, $state) {
-                    $set('url_slug', str::slug($state));
-                }),
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255)
+                    ->reactive()
+                    ->afterStateUpdated(function ($set, $state) {
+                        $set('url_slug', Str::slug($state));
+                    }),
+                Forms\Components\Hidden::make('url_slug'),
 
-            Forms\Components\TextInput::make('url_slug')
-                ->required()
-                ->maxLength(255),
+                Forms\Components\TextInput::make('seo_title')
+                    ->required()
+                    ->maxLength(255),
 
-            Forms\Components\TextInput::make('seo_title')
-                ->required()
-                ->maxLength(255),
+                // Forms\Components\TextInput::make('description')
+                // ->required()
+                // ->maxLength(255),
 
-            // Forms\Components\TextInput::make('description')
-            // ->required()
-            // ->maxLength(255),
+                RichEditor::make('description')
+                    ->required(),
 
-            RichEditor::make('description')
-                ->required(),
+                Select::make('category_id')
+                    ->label('category')
+                    ->relationship('category', 'category')
+                    ->required()
+                    ->preload()
+                    ->searchable(),
 
-            Select::make('category_id')
-                ->label('category')
-                ->relationship('category', 'category')
-                ->required()
-                ->preload()
-                ->searchable(),
+                Forms\Components\TextInput::make('price')
+                    ->required()
+                    ->maxLength(255),
 
-            Forms\Components\TextInput::make('price')
-                ->required()
-                ->maxLength(255),
+                Select::make('unit')
+                    ->label('Unit')
+                    ->options([
+                        '1 PKT' => '1 PKT',
+                        '1 BAG' => '1 BAG',
+                        '1 BOX' => '1 BOX',
+                        '1 PIECE' => '1 PIECE',
+                        '1 BUNDLE' => '1 BUNDLE',
+                    ])
+                    ->native(false)
+                    ->searchable()
+                    ->required(),
 
-            FileUpload::make('image')->image()
-                ->required(),
+                FileUpload::make('image')->image()
+                    ->required(),
 
             ]);
     }
@@ -107,14 +117,14 @@ class AllProductResource extends Resource
                 ]),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [

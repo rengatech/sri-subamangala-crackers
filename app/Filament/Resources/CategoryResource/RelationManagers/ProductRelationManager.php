@@ -25,7 +25,7 @@ class ProductRelationManager extends RelationManager
     {
         return $schema
             ->schema([
-                  
+
                 Forms\Components\TextInput::make('tamil_name')
                     ->required()
                     ->maxLength(255),
@@ -33,13 +33,11 @@ class ProductRelationManager extends RelationManager
                     ->required()
                     ->maxLength(255)
                     ->reactive()
-                    ->afterStateUpdated(function (\Filament\Forms\Set $set, $state) {
-                        $set('url_slug', str::slug($state));
+                    ->afterStateUpdated(function ($set, $state) {
+                        $set('url_slug', Str::slug($state));
                     }),
 
-                Forms\Components\TextInput::make('url_slug')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Hidden::make('url_slug'),
                 Forms\Components\TextInput::make('seo_title')
                     ->required()
                     ->maxLength(255),
@@ -51,6 +49,19 @@ class ProductRelationManager extends RelationManager
                 Forms\Components\TextInput::make('price')
                     ->required()
                     ->maxLength(255),
+
+                Forms\Components\Select::make('unit')
+                    ->label('Unit')
+                    ->options([
+                        '1 PKT' => '1 PKT',
+                        '1 BAG' => '1 BAG',
+                        '1 BOX' => '1 BOX',
+                        '1 PIECE' => '1 PIECE',
+                        '1 BUNDLE' => '1 BUNDLE',
+                    ])
+                    ->native(false)
+                    ->searchable()
+                    ->required(),
 
                 FileUpload::make('image')->image()
                     ->required(),

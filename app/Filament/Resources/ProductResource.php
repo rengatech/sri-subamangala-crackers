@@ -47,13 +47,11 @@ class ProductResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->reactive()
-                    ->afterStateUpdated(function (\Filament\Forms\Set $set, $state) {
-                        $set('url_slug', str::slug($state));
+                    ->afterStateUpdated(function ($set, $state) {
+                        $set('url_slug', Str::slug($state));
                     }),
 
-                Forms\Components\TextInput::make('url_slug')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Hidden::make('url_slug'),
 
                 Forms\Components\TextInput::make('seo_title')
                     ->required()
@@ -76,6 +74,19 @@ class ProductResource extends Resource
                 Forms\Components\TextInput::make('price')
                     ->required()
                     ->maxLength(255),
+
+                Select::make('unit')
+                    ->label('Unit')
+                    ->options([
+                        '1 PKT' => '1 PKT',
+                        '1 BAG' => '1 BAG',
+                        '1 BOX' => '1 BOX',
+                        '1 PIECE' => '1 PIECE',
+                        '1 BUNDLE' => '1 BUNDLE',
+                    ])
+                    ->native(false)
+                    ->searchable()
+                    ->required(),
 
                 FileUpload::make('image')->image()
                     ->required(),
@@ -133,7 +144,7 @@ class ProductResource extends Resource
         return [
             'index' => Pages\ListProducts::route('/'),
             'create' => Pages\CreateProduct::route('/create'),
-             'view' => Pages\ViewProduct::route('/{record}'),
+            'view' => Pages\ViewProduct::route('/{record}'),
             'edit' => Pages\EditProduct::route('/{record}/edit'),
         ];
     }
