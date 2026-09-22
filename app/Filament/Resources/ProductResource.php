@@ -29,7 +29,6 @@ class ProductResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
@@ -39,16 +38,16 @@ class ProductResource extends Resource
     {
         return $schema->columns(1)
             ->schema([
-
                 Forms\Components\TextInput::make('tamil_name')
                     ->required()
                     ->maxLength(255),
+
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255)
-                    ->reactive()
+                    ->live(onBlur: true)
                     ->afterStateUpdated(function ($set, $state) {
-                        $set('url_slug', Str::slug($state));
+                        $set('url_slug', Str::slug($state ?? ''));
                     }),
 
                 Forms\Components\Hidden::make('url_slug'),
@@ -56,10 +55,6 @@ class ProductResource extends Resource
                 Forms\Components\TextInput::make('seo_title')
                     ->required()
                     ->maxLength(255),
-
-                // Forms\Components\TextInput::make('description')
-                // ->required()
-                // ->maxLength(255),
 
                 RichEditor::make('description')
                     ->required(),
@@ -91,10 +86,9 @@ class ProductResource extends Resource
                 FileUpload::make('image')
                     ->image()
                     ->directory('products')
-                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg', 'image/webp'])
-                    ->maxSize(2048)
+                    ->disk('public')
+                    ->visibility('public')
                     ->required(),
-
             ]);
     }
 
@@ -107,11 +101,13 @@ class ProductResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('url_slug'),
                 Tables\Columns\TextColumn::make('seo_title'),
-                Tables\Columns\TextColumn::make('description'),
+                Tables\Columns\TextColumn::make('description')
+                    ->html()
+                    ->limit(30),
                 Tables\Columns\TextColumn::make('category.category'),
                 Tables\Columns\TextColumn::make('price'),
-                Tables\Columns\ImageColumn::make('image'),
-
+                Tables\Columns\ImageColumn::make('image')
+                    ->disk('public'),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -134,7 +130,6 @@ class ProductResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
-
 
     public static function getRelations(): array
     {
