@@ -174,6 +174,18 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
             </p>
         </div>
 
+        <!-- Product Image Disclaimer -->
+        <div class="mx-auto max-w-6xl px-4 pt-4">
+            <div class="flex flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-brand-red/40 bg-red-50 px-4 py-3 text-center sm:flex-row sm:gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5 shrink-0 text-brand-red">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                </svg>
+                <p class="text-sm font-bold text-brand-red sm:text-base">
+                    Note: The Product Image is only for your reference — packing and brand may change.
+                </p>
+            </div>
+        </div>
+
         <!-- Category Accordion -->
         <div class="mx-auto max-w-6xl px-4 py-6 space-y-4">
             <!-- Floating buttons (left side, stacked above WhatsApp & cart) -->
