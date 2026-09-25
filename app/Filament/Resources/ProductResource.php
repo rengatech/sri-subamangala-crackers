@@ -68,6 +68,7 @@ class ProductResource extends Resource
 
                 Forms\Components\TextInput::make('price')
                     ->required()
+                    ->numeric()
                     ->maxLength(255),
 
                 Select::make('unit')
