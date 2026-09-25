@@ -18,15 +18,21 @@ const cartItems = computed(() => store.state.cartItems)
 const totalPrice = computed(() => store.getters.totalPrice)
 const totalItems = computed(() => store.getters.totalItems)
 
-const discountAmount = computed(() =>
-    Math.round((props.global_discount / 100) * totalPrice.value)
-)
+const discountAmount = computed(() => {
+    let totalDiscount = 0;
+    cartItems.value.forEach(item => {
+        if (item.has_discount !== false) {
+            totalDiscount += Math.round((item.price * props.global_discount) / 100) * item.quantity;
+        }
+    });
+    return totalDiscount;
+})
 const discountedTotal = computed(() =>
-    Math.round(totalPrice.value - (totalPrice.value * props.global_discount) / 100)
+    Math.round(totalPrice.value - discountAmount.value)
 )
 const canSubmit = computed(() => discountedTotal.value >= props.min_order_value)
 
-const finalPrice = (price) => Math.round(price - (price * props.global_discount) / 100)
+const finalPrice = (price, hasDiscount = true) => hasDiscount ? Math.round(price - (price * props.global_discount) / 100) : price
 
 const orderItems = computed(() => {
     return store.getters.getOrderItems.map(item => pick(item, ['id', 'quantity']))
@@ -250,11 +256,11 @@ const submitOrder = () => {
                                     <div class="min-w-0 flex-1">
                                         <p class="text-sm font-medium text-brand-dark">{{ item.name }}</p>
                                         <div class="flex items-center gap-1.5">
-                                            <span v-if="global_discount > 0" class="text-xs text-gray-400 line-through">₹{{ item.price }}</span>
-                                            <span class="text-xs" :class="global_discount > 0 ? 'text-green-600 font-medium' : 'text-gray-400'">₹{{ global_discount > 0 ? finalPrice(item.price) : item.price }} each</span>
+                                            <span v-if="global_discount > 0 && item.has_discount !== false" class="text-xs text-gray-400 line-through">₹{{ item.price }}</span>
+                                            <span class="text-xs" :class="global_discount > 0 && item.has_discount !== false ? 'text-green-600 font-medium' : 'text-gray-400'">₹{{ global_discount > 0 && item.has_discount !== false ? finalPrice(item.price, item.has_discount) : item.price }} each</span>
                                         </div>
                                     </div>
-                                    <p class="shrink-0 text-sm font-semibold">₹{{ global_discount > 0 ? finalPrice(item.price) * item.quantity : item.price * item.quantity }}</p>
+                                    <p class="shrink-0 text-sm font-semibold">₹{{ global_discount > 0 && item.has_discount !== false ? finalPrice(item.price, item.has_discount) * item.quantity : item.price * item.quantity }}</p>
                                 </div>
                                 <div class="mt-2 flex items-center justify-between">
                                     <button

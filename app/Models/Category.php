@@ -16,7 +16,11 @@ class Category extends Model
     protected $dates = ['deleted_at'];
 
     protected $guarded = [];
-    
+
+    protected $casts = [
+        'has_discount' => 'boolean',
+    ];
+
 
     public function products()
     {

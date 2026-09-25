@@ -21,16 +21,16 @@ class CategoryResource extends Resource
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-tag';
 
     protected static ?string $navigationLabel = 'Category';
-    
+
     protected static string|\UnitEnum|null $navigationGroup = 'Categories';
 
     protected static ?int $navigationSort = 1;
-    
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
     }
-    
+
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -38,6 +38,9 @@ class CategoryResource extends Resource
                 Forms\Components\TextInput::make('category')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\Toggle::make('has_discount')
+                    ->label('Apply Discount')
+                    ->default(false),
             ]);
     }
 
@@ -47,6 +50,9 @@ class CategoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('category')
                     ->searchable(),
+                Tables\Columns\IconColumn::make('has_discount')
+                    ->label('Discount Enabled')
+                    ->boolean(),
 
             ])
             ->filters([

@@ -105,9 +105,10 @@ class OrderController extends Controller
 
     protected function getItemTotal($product_id, $quantity, $discount)
     {
-        $product = Product::find($product_id);
+        $product = Product::with('category')->find($product_id);
+        $effective_discount = ($product && $product->category && $product->category->has_discount) ? $discount : 0;
 
-        return $quantity * round($product->price - round($product->price * $discount / 100));
+        return $quantity * round($product->price - round($product->price * $effective_discount / 100));
     }
 
 
@@ -122,7 +123,7 @@ class OrderController extends Controller
     public function downloadOrder(Request $request, GeneralSettings $settings)
     {
 
-        $order = Order::with('customer', 'address', 'items.product')->find($request->id)->toArray();
+        $order = Order::with('customer', 'address', 'items.product.category')->find($request->id)->toArray();
         // return response()->json($order);
 
         $order['global_discount'] = $settings->global_discount;
@@ -146,7 +147,7 @@ class OrderController extends Controller
     public function bulkPdfDownload(Request $request, GeneralSettings $settings)
     {
         $orderIds = $request->input('order_ids');
-        $orders = Order::with('customer', 'address', 'items.product')->whereIn('id', $orderIds)->get();
+        $orders = Order::with('customer', 'address', 'items.product.category')->whereIn('id', $orderIds)->get();
         $global_discount = $settings->global_discount;
         $company_address = $settings->company_address;
         $company_name = $settings->company_name;

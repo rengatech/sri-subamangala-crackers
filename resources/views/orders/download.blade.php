@@ -166,7 +166,10 @@
                         <td>{{ $serialNumber }}</td>
                         <td class="product-name">{{ $item['product']['name'] ?? 'N/A' }}</td>
                         <td>{{ $item['quantity'] }}</td>
-                        <td>{{ $item['product'] ? round($item['product']['price'] - round($item['product']['price'] * $global_discount / 100)) : 0 }}
+                        @php
+                            $effective_discount = (isset($item['product']['category']) && isset($item['product']['category']['has_discount']) && $item['product']['category']['has_discount']) ? $global_discount : 0;
+                        @endphp
+                        <td>{{ $item['product'] ? round($item['product']['price'] - round($item['product']['price'] * $effective_discount / 100)) : 0 }}
                         </td>
                         <td>{{ $item['total'] }}</td>
                     </tr>
