@@ -75,10 +75,13 @@ class BillingForm
                     ->readonly()
                     ->default(0.0),
                 TextInput::make('discount')
-                    ->label('Discount')
+                    ->label('Discount (%)')
                     ->required()
                     ->numeric()
                     ->default(0.0)
+                    ->minValue(0)
+                    ->maxValue(100)
+                    ->suffix('%')
                     ->live(onBlur: true)
                     ->afterStateUpdated(function ($get, $set) {
                         self::updateTotals($get, $set);
@@ -100,7 +103,9 @@ class BillingForm
         $subTotal = collect($items)->sum(fn($item) => (float) ($item['total'] ?? 0));
         $set('sub_total', $subTotal);
 
-        $discount = (float) ($get('discount') ?: 0);
-        $set('net_amount', max(0, $subTotal - $discount));
+        // Discount is now treated as a PERCENTAGE (0-100), not a flat amount.
+        $discountPercent = (float) ($get('discount') ?: 0);
+        $discountAmount = $subTotal * ($discountPercent / 100);
+        $set('net_amount', max(0, $subTotal - $discountAmount));
     }
 }
