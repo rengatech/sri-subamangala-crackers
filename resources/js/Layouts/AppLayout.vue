@@ -17,10 +17,8 @@ defineEmits(['contact-click', 'scroll-to-checkout'])
 
 const store = useStore()
 const totalItems = computed(() => store.getters.totalItems)
-const totalPrice = computed(() => store.getters.totalPrice)
-const discountedTotal = computed(() =>
-    Math.round(totalPrice.value - (totalPrice.value * props.globalDiscount) / 100)
-)
+// Same getter as Home.vue's Net Total, so both always match
+const discountedTotal = computed(() => store.getters.netTotal(props.globalDiscount))
 
 const scrollToCheckout = () => {
     const el = document.getElementById('checkout-section')

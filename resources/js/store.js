@@ -6,6 +6,13 @@ function saveCart(state) {
   localStorage.setItem(CART_KEY, JSON.stringify(state.cartItems));
 }
 
+// Same rule as OrderController::getItemTotal():
+// per-unit discount is rounded, and only for items whose category has a discount.
+function unitDiscount(item, discountPercent) {
+  if (item.has_discount === false) return 0;
+  return Math.round((item.price * discountPercent) / 100);
+}
+
 export const store = createStore({
   state: {
     cartItems: [],
@@ -97,6 +104,20 @@ export const store = createStore({
         total += item.quantity * item.price;
       }
       return total;
+    },
+
+    // Total discount amount for the whole cart. Usage: store.getters.discountTotal(global_discount)
+    discountTotal: (state) => (discountPercent) => {
+      let total = 0;
+      for (const item of state.cartItems) {
+        total += unitDiscount(item, discountPercent) * item.quantity;
+      }
+      return total;
+    },
+
+    // Final payable amount. Usage: store.getters.netTotal(global_discount)
+    netTotal: (state, getters) => (discountPercent) => {
+      return Math.round(getters.totalPrice - getters.discountTotal(discountPercent));
     },
 
     totalItems(state) {
