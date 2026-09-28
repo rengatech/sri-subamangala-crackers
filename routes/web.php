@@ -61,7 +61,7 @@ Route::get('/admin/orders/{id}/download', [OrderController::class, 'downloadOrde
 Route::get('/admin/orders/bulk-download', [OrderController::class, 'bulkPdfDownload'])->name('orders.bulk-download');
 
 Route::get('/admin/billings/{billing}/print', function (App\Models\Billing $billing, App\Settings\GeneralSettings $settings) {
-    $billing->load('items');
+    $billing->load('items.product');
     return view('billing.print', compact('billing', 'settings'));
 })->name('admin.billings.print')->middleware('web');
 

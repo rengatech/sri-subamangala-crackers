@@ -19,4 +19,9 @@ class BillingItem extends Model
     {
         return $this->belongsTo(Billing::class);
     }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class)->withTrashed();
+    }
 }

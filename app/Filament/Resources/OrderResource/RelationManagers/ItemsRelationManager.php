@@ -4,15 +4,13 @@ namespace App\Filament\Resources\OrderResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
 use Filament\Actions;
 use Filament\Tables;
-use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Product;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ItemsRelationManager extends RelationManager
 {
@@ -24,17 +22,55 @@ class ItemsRelationManager extends RelationManager
     {
         return $schema
             ->schema([
-                Forms\Components\TextInput::make('id')
+                Forms\Components\Select::make('product_id')
+                    ->label('Product')
+                    ->relationship(
+                        name: 'product',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: fn ($query) => $query->withTrashed(),
+                    )
+                    ->searchable()
+                    ->preload()
                     ->required()
-                    ->maxLength(255),
+                    ->live()
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        self::recalculateTotal($get, $set);
+                    }),
+
+                Forms\Components\TextInput::make('quantity')
+                    ->numeric()
+                    ->minValue(1)
+                    ->required()
+                    ->live(debounce: 500)
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        self::recalculateTotal($get, $set);
+                    }),
+
+                Forms\Components\TextInput::make('total')
+                    ->numeric()
+                    ->required()
+                    ->readOnly(),
             ]);
+    }
+
+    protected static function recalculateTotal(Get $get, Set $set): void
+    {
+        $product = Product::withTrashed()->find($get('product_id'));
+        $quantity = (int) $get('quantity');
+
+        if (! $product) {
+            return;
+        }
+
+        $set('total', (int) round($product->price * $quantity));
     }
 
     public function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('product.name'),
+                Tables\Columns\TextColumn::make('product.name')
+                    ->label('Product'),
                 Tables\Columns\TextColumn::make('quantity'),
                 Tables\Columns\TextColumn::make('total'),
             ])

@@ -80,6 +80,19 @@
             padding-bottom: 15px;
         }
 
+        /* Header row repeats on every page, footer (totals) only once at the end */
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-row-group;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+
         @media print {
             .no-print {
                 display: none;
@@ -89,6 +102,14 @@
 </head>
 
 <body onload="window.print()">
+    @php
+        // Calculate totals from the items so they always match the product totals
+        $subTotal = $billing->items->sum('total');
+        $discountPercent = (float) $billing->discount;
+        $discountAmount = round($subTotal * $discountPercent / 100, 2);
+        $netAmount = $subTotal - $discountAmount;
+    @endphp
+
     <div class="container">
         <div style="display: flex; justify-content: flex-end;">
             <button class="no-print" onclick="window.print()" style="padding: 10px 20px; cursor:pointer;">Print
@@ -139,7 +160,7 @@
             <tbody>
                 @foreach($billing->items as $item)
                     <tr>
-                        <td>{{ $item->product_name ?? 'Item' }}</td>
+                        <td>{{ $item->product_name ?: ($item->product->name ?? 'Item') }}</td>
                         <td>{{ $item->quantity }}</td>
                         <td>₹{{ number_format($item->price, 2) }}</td>
                         <td class="text-right">₹{{ number_format($item->total, 2) }}</td>
@@ -149,16 +170,18 @@
             <tfoot>
                 <tr>
                     <th colspan="3" class="text-right">Sub Total</th>
-                    <th class="text-right">₹{{ number_format($billing->sub_total, 2) }}</th>
+                    <th class="text-right">₹{{ number_format($subTotal, 2) }}</th>
                 </tr>
                 <tr>
-                    <th colspan="3" class="text-right">Discount</th>
-                    <th class="text-right">₹{{ number_format($billing->discount, 2) }}</th>
+                    <th colspan="3" class="text-right">
+                        Discount ({{ rtrim(rtrim(number_format($discountPercent, 2), '0'), '.') }}%)
+                    </th>
+                    <th class="text-right">-₹{{ number_format($discountAmount, 2) }}</th>
                 </tr>
                 <tr>
                     <th colspan="3" class="text-right" style="font-size: 18px;">Net Amount</th>
                     <th class="text-right" style="font-size: 18px; color: #b11f24;">
-                        ₹{{ number_format($billing->net_amount, 2) }}</th>
+                        ₹{{ number_format($netAmount, 2) }}</th>
                 </tr>
             </tfoot>
         </table>
