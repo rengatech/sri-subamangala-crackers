@@ -53,55 +53,73 @@ class OrderResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-        ->schema([
-            Section::make('Order Summary')
-                ->schema([
+            ->schema([
+                Section::make('Order Summary')
+                    ->schema([
 
-                    Select::make('customer_id')
-                        ->label('Customer')
-                        ->options(Customer::all()?->pluck('name', 'id')?->filter()?->toArray() + [null => 'No customer found'])
-                        ->required()
-                        ->searchable(),
+                        Forms\Components\Select::make('customer_id')
+                            ->relationship('customer', 'name')
+                            ->label('Customer')
+                            ->required()
+                            ->searchable()
+                            ->editOptionForm([
+                                Forms\Components\TextInput::make('name')->required(),
+                                Forms\Components\TextInput::make('mobile_number')->required(),
+                            ])
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('name')->required(),
+                                Forms\Components\TextInput::make('mobile_number')->required(),
+                            ]),
 
-                    Forms\Components\TextInput::make('net_total')
-                        ->required()
-                        ->maxLength(255),
+                        Forms\Components\TextInput::make('net_total')
+                            ->required()
+                            ->maxLength(255),
 
-                        Select::make('address_id')
-                        ->label('Address')
-                        ->options(Address::all()?->pluck('address', 'id')?->filter()?->toArray() + [null => 'No address found'])
-                        ->required()
-                        ->searchable(),
+                        Forms\Components\Select::make('address_id')
+                            ->relationship('address', 'address')
+                            ->label('Address')
+                            ->required()
+                            ->searchable()
+                            ->editOptionForm([
+                                Forms\Components\TextInput::make('address')->required(),
+                                Forms\Components\TextInput::make('city_town')->required(),
+                                Forms\Components\TextInput::make('pincode'),
+                            ])
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('address')->required(),
+                                Forms\Components\TextInput::make('city_town')->required(),
+                                Forms\Components\TextInput::make('pincode'),
+                            ]),
 
-                        Select::make('city_town')
-                        ->label('City/Town')
-                        ->options(Address::all()?->pluck('city_town', 'city_town')?->filter()?->toArray() + [null => 'No city found'])
-                        ->searchable(),
+                        Forms\Components\Select::make('city_town')
+                            ->label('City/Town')
+                            ->options(Address::all()?->pluck('city_town', 'city_town')?->filter()?->toArray() + [null => 'No city found'])
+                            ->searchable(),
 
-                    Forms\Components\Select::make('status')
+                        Forms\Components\Select::make('status')
                             ->options([
                                 'placed' => 'placed',
                                 'cancelled' => 'cancelled',
                             ])->required(),
 
 
-                ])->columns()
+                    ])->columns()
 
 
-                ]);
+            ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
 
-        ->query(function () {
-            return Order::query()
-                ->with(['customer', 'address'])
-                ->where('status', 'placed')
-                ->whereYear('created_at', session('admin_selected_year', now()->year))
-                ->latest('created_at');
-        })
+            ->query(function () {
+                return Order::query()
+                    ->with(['customer', 'address'])
+                    ->where('status', 'placed')
+                    ->whereYear('created_at', session('admin_selected_year', now()->year))
+                    ->latest('created_at');
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('Order ID')->searchable()->toggleable()->sortable(),
                 Tables\Columns\TextColumn::make('customer.name')->label('Customer name')->searchable()->toggleable()->sortable(),
@@ -112,27 +130,27 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('net_total')->searchable()->toggleable()->sortable(),
                 Tables\Columns\TextColumn::make('status')->searchable()->toggleable(isToggledHiddenByDefault: true)->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                ->dateTime('d-m-y H:i:s')
-                ->sortable()
-                ->toggleable(),
+                    ->dateTime('d-m-y H:i:s')
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 Filter::make('Created_at')
-                ->form([
-                    DatePicker::make('From_date'),
-                    DatePicker::make('To_date'),
-                ])
-                ->query(function (Builder $query, array $data): Builder {
-                    return $query
-                        ->when(
-                            $data['From_date'],
-                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
-                        )
-                        ->when(
-                            $data['To_date'],
-                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
-                        );
-                }),
+                    ->form([
+                        DatePicker::make('From_date'),
+                        DatePicker::make('To_date'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['From_date'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['To_date'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    }),
             ])
             ->actions([
                 Actions\Action::make('download')
@@ -140,7 +158,7 @@ class OrderResource extends Resource
                     ->button()
                     ->color('info')
                     ->url(
-                        fn (Order $record): string => route('admin.orders.download', ['id' => $record->id]),
+                        fn(Order $record): string => route('admin.orders.download', ['id' => $record->id]),
                         shouldOpenInNewTab: true
                     ),
 
@@ -190,10 +208,10 @@ class OrderResource extends Resource
             ->bulkActions([
                 Actions\BulkActionGroup::make([
                     Actions\DeleteBulkAction::make('delete')
-                        ->action(fn (Collection $records) => $records->each->delete())
+                        ->action(fn(Collection $records) => $records->each->delete())
                         ->deselectRecordsAfterCompletion(),
 
-                Actions\BulkAction::make('Download pdf')
+                    Actions\BulkAction::make('Download pdf')
                         ->action(function (Collection $records) {
                             $recordIds = $records->pluck('id')->toArray();
 
@@ -207,7 +225,7 @@ class OrderResource extends Resource
                         })
                         ->icon('heroicon-o-document-arrow-down'),
 
-                        ExportBulkAction::make('Inventory')
+                    ExportBulkAction::make('Inventory')
                         ->action(function (Collection $records) {
                             $recordIds = $records->pluck('id')->toArray();
                             if (count($recordIds) === 0) {
@@ -222,21 +240,21 @@ class OrderResource extends Resource
                         ->label('Inventory'),
 
 
-                        Actions\BulkAction::make('Bulk Cancel')
+                    Actions\BulkAction::make('Bulk Cancel')
                         ->action(function (Collection $records) {
                             $recordIds = $records->pluck('id')->toArray();
                             Order::whereIn('id', $recordIds)->update(['status' => 'cancelled']);
                         })->icon('heroicon-o-x-circle'),
 
-                        Actions\BulkAction::make('Bulk Refund')
+                    Actions\BulkAction::make('Bulk Refund')
                         ->action(function (Collection $records) {
                             $recordIds = $records->pluck('id')->toArray();
                             Order::whereIn('id', $recordIds)->update(['status' => 'refund']);
                         })->icon('heroicon-o-arrow-uturn-right'),
 
-                        SendWhatsAppBulkAction::make(),
+                    SendWhatsAppBulkAction::make(),
 
-                        Actions\BulkAction::make('Bulk Payment')
+                    Actions\BulkAction::make('Bulk Payment')
                         ->form([
                             Select::make('bank_account_id')
                                 ->label('Payment Received')
@@ -262,10 +280,10 @@ class OrderResource extends Resource
                                 $record->update(['status' => 'payment_received']);
                             });
                         })->icon('heroicon-o-x-circle'),
-                    ]),
+                ]),
 
-                    ])->paginated([10, 30, 40, 50, 75, 100 => 'all'])
-                    ->defaultSort('created_at', 'desc');
+            ])->paginated([10, 30, 40, 50, 75, 100 => 'all'])
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getEloquentQuery(): Builder
