@@ -27,7 +27,7 @@ class ItemsRelationManager extends RelationManager
                     ->relationship(
                         name: 'product',
                         titleAttribute: 'name',
-                        modifyQueryUsing: fn ($query) => $query->withTrashed(),
+                        modifyQueryUsing: fn($query) => $query->withTrashed(),
                     )
                     ->searchable()
                     ->preload()
@@ -55,14 +55,27 @@ class ItemsRelationManager extends RelationManager
 
     protected static function recalculateTotal(Get $get, Set $set): void
     {
-        $product = Product::withTrashed()->find($get('product_id'));
+        $product = Product::withTrashed()->with('category')->find($get('product_id'));
         $quantity = (int) $get('quantity');
 
-        if (! $product) {
+        if (!$product) {
             return;
         }
 
-        $set('total', (int) round($product->price * $quantity));
+        $price = $product->price;
+
+        $hasDiscount = true;
+        if ($product->category && isset($product->category->has_discount)) {
+            $hasDiscount = $product->category->has_discount;
+        }
+
+        if ($hasDiscount) {
+            $globalDiscount = app(\App\Settings\GeneralSettings::class)->global_discount ?? 0;
+            $discountAmount = round(($price * $globalDiscount) / 100);
+            $price = $price - $discountAmount;
+        }
+
+        $set('total', (int) round($price * $quantity));
     }
 
     public function table(Table $table): Table
