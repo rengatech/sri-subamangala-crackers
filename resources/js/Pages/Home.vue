@@ -282,7 +282,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
                             </div>
                         </div>
                         <!-- Right: Image with ADD overlay -->
-                        <div class="img-hover-zoom relative w-28 shrink-0 sm:w-32">
+                        <div class="img-hover-zoom relative h-28 w-28 shrink-0 sm:h-32 sm:w-32">
                             <img
                                 v-if="product.image"
                                 :src="'/storage/' + product.image"
