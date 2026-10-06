@@ -91,14 +91,34 @@ class ItemsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Actions\CreateAction::make(),
+                Actions\CreateAction::make()
+                    ->after(function (RelationManager $livewire) {
+                        $order = $livewire->getOwnerRecord();
+                        $order->update(['net_total' => $order->items()->sum('total')]);
+                        $livewire->redirect(request()->header('Referer'));
+                    }),
             ])
             ->actions([
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\EditAction::make()
+                    ->after(function (RelationManager $livewire) {
+                        $order = $livewire->getOwnerRecord();
+                        $order->update(['net_total' => $order->items()->sum('total')]);
+                        $livewire->redirect(request()->header('Referer'));
+                    }),
+                Actions\DeleteAction::make()
+                    ->after(function (RelationManager $livewire) {
+                        $order = $livewire->getOwnerRecord();
+                        $order->update(['net_total' => $order->items()->sum('total')]);
+                        $livewire->redirect(request()->header('Referer'));
+                    }),
             ])
             ->bulkActions([
-                Actions\DeleteBulkAction::make(),
+                Actions\DeleteBulkAction::make()
+                    ->after(function (RelationManager $livewire) {
+                        $order = $livewire->getOwnerRecord();
+                        $order->update(['net_total' => $order->items()->sum('total')]);
+                        $livewire->redirect(request()->header('Referer'));
+                    }),
             ]);
     }
 }
