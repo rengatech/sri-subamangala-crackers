@@ -19,6 +19,7 @@ const store = useStore()
 const totalItems = computed(() => store.getters.totalItems)
 // Same getter as Home.vue's Net Total, so both always match
 const discountedTotal = computed(() => store.getters.netTotal(props.globalDiscount))
+const formatPrice = (n) => (Math.round((Number(n) + Number.EPSILON) * 100) / 100).toFixed(2)
 
 const scrollToCheckout = () => {
     const el = document.getElementById('checkout-section')
@@ -64,7 +65,7 @@ const scrollToCheckout = () => {
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121 0 2.09-.773 2.34-1.867l1.86-8.154A.75.75 0 0 0 20.44 3.5H6.456M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
             </svg>
-            <span class="text-sm font-bold">₹{{ discountedTotal }}</span>
+            <span class="text-sm font-bold">₹{{ formatPrice(discountedTotal) }}</span>
             <span class="flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-bold text-brand-red">
                 {{ totalItems }}
             </span>

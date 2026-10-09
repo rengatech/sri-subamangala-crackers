@@ -16,15 +16,17 @@ const cartItems = computed(() => store.state.cartItems)
 const totalPrice = computed(() => store.getters.totalPrice)
 const totalItems = computed(() => store.getters.totalItems)
 
-const discountedTotal = computed(() =>
-    Math.round(totalPrice.value - (totalPrice.value * props.globalDiscount) / 100)
-)
+const round2 = (n) => Math.round((Number(n) + Number.EPSILON) * 100) / 100
+const formatPrice = (n) => round2(n).toFixed(2)
 
-const discountAmount = computed(() =>
-    Math.round((props.globalDiscount / 100) * totalPrice.value)
-)
+// Same getters as Home.vue / AppLayout.vue so every total matches
+const discountedTotal = computed(() => store.getters.netTotal(props.globalDiscount))
+const discountAmount = computed(() => store.getters.discountTotal(props.globalDiscount))
 
-const finalPrice = (price) => Math.round(price - (price * props.globalDiscount) / 100)
+const finalPrice = (item) =>
+    item.has_discount === false
+        ? round2(item.price)
+        : round2(Number(item.price) - round2((Number(item.price) * props.globalDiscount) / 100))
 
 const canCheckout = computed(() => discountedTotal.value >= props.minOrderValue)
 
@@ -97,12 +99,12 @@ const clearCart = () => store.commit('clearCart')
                             <div class="min-w-0 flex-1">
                                 <p class="truncate text-sm font-medium text-brand-dark">{{ item.name }}</p>
                                 <div class="flex items-center gap-1.5">
-                                    <span v-if="globalDiscount > 0" class="text-xs text-gray-400 line-through">₹{{ item.price }}</span>
-                                    <span class="text-xs" :class="globalDiscount > 0 ? 'text-green-600 font-medium' : 'text-gray-400'">₹{{ globalDiscount > 0 ? finalPrice(item.price) : item.price }} each</span>
+                                    <span v-if="globalDiscount > 0 && item.has_discount !== false" class="text-xs text-gray-400 line-through">₹{{ item.price }}</span>
+                                    <span class="text-xs" :class="globalDiscount > 0 && item.has_discount !== false ? 'text-green-600 font-medium' : 'text-gray-400'">₹{{ globalDiscount > 0 && item.has_discount !== false ? formatPrice(finalPrice(item)) : item.price }} each</span>
                                 </div>
                             </div>
                             <p class="shrink-0 text-sm font-semibold text-brand-dark">
-                                ₹{{ globalDiscount > 0 ? finalPrice(item.price) * item.quantity : item.price * item.quantity }}
+                                ₹{{ formatPrice(globalDiscount > 0 ? finalPrice(item) * item.quantity : item.price * item.quantity) }}
                             </p>
                         </div>
                         <div class="mt-2 flex items-center justify-between">
@@ -136,15 +138,15 @@ const clearCart = () => store.commit('clearCart')
                 <div class="mb-3 space-y-1 text-sm">
                     <div class="flex justify-between">
                         <span class="text-gray-500">MRP Total</span>
-                        <span>₹{{ totalPrice }}</span>
+                        <span>₹{{ formatPrice(totalPrice) }}</span>
                     </div>
                     <div class="flex justify-between text-green-600">
                         <span>Discount ({{ globalDiscount }}%)</span>
-                        <span>-₹{{ discountAmount }}</span>
+                        <span>-₹{{ formatPrice(discountAmount) }}</span>
                     </div>
                     <div class="flex justify-between border-t pt-1 text-base font-bold text-brand-dark">
                         <span>Net Total</span>
-                        <span>₹{{ discountedTotal }}</span>
+                        <span>₹{{ formatPrice(discountedTotal) }}</span>
                     </div>
                 </div>
 

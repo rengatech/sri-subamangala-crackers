@@ -6,11 +6,15 @@ function saveCart(state) {
   localStorage.setItem(CART_KEY, JSON.stringify(state.cartItems));
 }
 
+// Exact 2-decimal rounding (no whole-rupee rounding)
+export const round2 = (n) => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
+export const formatPrice = (n) => round2(n).toFixed(2);
+
 // Same rule as OrderController::getItemTotal():
-// per-unit discount is rounded, and only for items whose category has a discount.
+// per-unit discount is rounded to 2 decimals, only for items whose category has a discount.
 function unitDiscount(item, discountPercent) {
   if (item.has_discount === false) return 0;
-  return Math.round((item.price * discountPercent) / 100);
+  return round2((Number(item.price) * discountPercent) / 100);
 }
 
 export const store = createStore({
@@ -101,9 +105,9 @@ export const store = createStore({
     totalPrice(state) {
       let total = 0;
       for (const item of state.cartItems) {
-        total += item.quantity * item.price;
+        total += item.quantity * Number(item.price);
       }
-      return total;
+      return round2(total);
     },
 
     // Total discount amount for the whole cart. Usage: store.getters.discountTotal(global_discount)
@@ -112,12 +116,12 @@ export const store = createStore({
       for (const item of state.cartItems) {
         total += unitDiscount(item, discountPercent) * item.quantity;
       }
-      return total;
+      return round2(total);
     },
 
     // Final payable amount. Usage: store.getters.netTotal(global_discount)
     netTotal: (state, getters) => (discountPercent) => {
-      return Math.round(getters.totalPrice - getters.discountTotal(discountPercent));
+      return round2(getters.totalPrice - getters.discountTotal(discountPercent));
     },
 
     totalItems(state) {
@@ -127,7 +131,7 @@ export const store = createStore({
     priceByItem: (state) => (itemId) => {
       const item = state.cartItems.find((item) => item.id === itemId);
       if (item) {
-        return item.quantity * item.price;
+        return round2(item.quantity * Number(item.price));
       }
       return 0;
     },
