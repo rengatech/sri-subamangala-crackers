@@ -40,18 +40,29 @@
             height: auto;
         }
 
-        /* Customer info */
-        .customer-info {
-            padding: 10px 12px;
+        /* Customer info (2 columns) */
+        .customer-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .customer-info h3 {
+        .customer-table td {
+            vertical-align: top;
+            padding: 8px 12px;
+            width: 50%;
+        }
+
+        .customer-table td.right-col {
+            border-left: 1px solid #d1d5db;
+        }
+
+        .customer-table h3 {
             font-size: 15px;
             font-weight: 600;
             margin: 0 0 4px;
         }
 
-        .customer-info p {
+        .customer-table p {
             margin: 2px 0;
             font-size: 13px;
         }
@@ -67,7 +78,7 @@
             background: #f3f4f6;
             border-bottom: 1px solid #d1d5db;
             border-right: 1px solid #d1d5db;
-            padding: 6px 8px;
+            padding: 4px 8px;
             font-size: 13px;
             font-weight: 600;
             text-align: center;
@@ -80,8 +91,9 @@
         .items-table td {
             border-bottom: 1px solid #d1d5db;
             border-right: 1px solid #d1d5db;
-            padding: 5px 8px;
+            padding: 1px 8px;
             font-size: 12px;
+            line-height: 1.2;
             text-align: center;
         }
 
@@ -138,15 +150,21 @@
             </tr>
         </table>
 
-        <!-- Customer Info -->
-        <div class="customer-info">
-            <h3>From</h3>
-            <p><span class="label">Name :</span> {{ $customer['name'] }}</p>
-            <p><span class="label">Mobile Number :</span> {{ $customer['mobile_number'] }}</p>
-            <p><span class="label">WhatsApp Number :</span> {{ $customer['whatsapp_number'] }}</p>
-            <p><span class="label">City :</span> {{ $address['city_town'] }}</p>
-            <p><span class="label">Address :</span> {{ $address['address'] }}</p>
-        </div>
+        <!-- Customer Info: left = Name, Mobile | right = WhatsApp, City, Address -->
+        <table class="customer-table" cellpadding="0" cellspacing="0">
+            <tr>
+                <td>
+                    <h3>From</h3>
+                    <p><span class="label">Name :</span> {{ $customer['name'] }}</p>
+                    <p><span class="label">Mobile Number :</span> {{ $customer['mobile_number'] }}</p>
+                </td>
+                <td class="right-col">
+                    <p><span class="label">WhatsApp Number :</span> {{ $customer['whatsapp_number'] }}</p>
+                    <p><span class="label">City :</span> {{ $address['city_town'] }}</p>
+                    <p><span class="label">Address :</span> {{ $address['address'] }}</p>
+                </td>
+            </tr>
+        </table>
 
         <!-- Items Table -->
         <table class="items-table" cellpadding="0" cellspacing="0">
@@ -162,22 +180,23 @@
             <tbody>
                 @php $serialNumber = 1; @endphp
                 @foreach($items as $item)
+                    @php
+                        $effective_discount = (isset($item['product']['category']) && isset($item['product']['category']['has_discount']) && $item['product']['category']['has_discount']) ? $global_discount : 0;
+                        $mrp = $item['product'] ? (float) $item['product']['price'] : 0;
+                        $net_rate = round($mrp - round($mrp * $effective_discount / 100, 2), 2);
+                    @endphp
                     <tr>
                         <td>{{ $serialNumber }}</td>
                         <td class="product-name">{{ $item['product']['name'] ?? 'N/A' }}</td>
                         <td>{{ $item['quantity'] }}</td>
-                        @php
-                            $effective_discount = (isset($item['product']['category']) && isset($item['product']['category']['has_discount']) && $item['product']['category']['has_discount']) ? $global_discount : 0;
-                        @endphp
-                        <td>{{ $item['product'] ? round($item['product']['price'] - round($item['product']['price'] * $effective_discount / 100)) : 0 }}
-                        </td>
-                        <td>{{ $item['total'] }}</td>
+                        <td>{{ number_format($net_rate, 2) }}</td>
+                        <td>{{ number_format((float) $item['total'], 2) }}</td>
                     </tr>
                     @php $serialNumber++; @endphp
                 @endforeach
                 <tr class="total-row">
                     <td colspan="4" style="text-align: right; border: 1px solid #d1d5db;">Total :</td>
-                    <td style="border: 1px solid #d1d5db;">₹ {{ $net_total }}</td>
+                    <td style="border: 1px solid #d1d5db;">₹ {{ number_format((float) $net_total, 2) }}</td>
                 </tr>
             </tbody>
         </table>

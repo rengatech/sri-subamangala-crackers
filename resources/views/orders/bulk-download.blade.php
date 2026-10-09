@@ -131,7 +131,7 @@
                     </td>
                     <td style="padding: 6px 8px; text-align: center;">
                         <p style="margin: 0; font-weight: 700; font-size: 12px; color: #ff0000;">Net Amount :
-                            ₹{{ $order['net_total'] }}</p>
+                            ₹{{ number_format((float) $order['net_total'], 2) }}</p>
                     </td>
                 </tr>
             </table>
@@ -151,22 +151,21 @@
                 </thead>
                 <tbody>
                     @foreach ($order['items'] as $idx => $item)
-                            @php
-                                $effective_discount = (isset($item['product']['category']) && isset($item['product']['category']['has_discount']) && $item['product']['category']['has_discount']) ? $global_discount : 0;
-                            @endphp
-                            <tr>
-                                <td>{{ $idx + 1 }}</td>
-                                <td class="left">{{ $item['product']['name'] ?? '' }}</td>
-                                <td>{{ $item['quantity'] ?? '' }}</td>
-                                <td>₹{{ isset($item['product']['price']) && isset($effective_discount)
-                        ? round($item['product']['price'] / (1 - $effective_discount * (1 / 100)))
-                        : '' }}</td>
-                                <td>₹{{ isset($item['product']['price']) && isset($effective_discount)
-                        ? round($item['product']['price'] / (1 - $effective_discount * (1 / 100)) - $item['product']['price'])
-                        : '' }}</td>
-                                <td>₹{{ isset($item['product']['price']) ? round($item['product']['price']) : '' }}</td>
-                                <td>₹{{ $item['total'] }}</td>
-                            </tr>
+                        @php
+                            $effective_discount = (isset($item['product']['category']) && isset($item['product']['category']['has_discount']) && $item['product']['category']['has_discount']) ? $global_discount : 0;
+                            $mrp = isset($item['product']['price']) ? (float) $item['product']['price'] : null;
+                            $discount_amt = $mrp !== null ? round($mrp * $effective_discount / 100, 2) : null;
+                            $offer_rate = $mrp !== null ? round($mrp - $discount_amt, 2) : null;
+                        @endphp
+                        <tr>
+                            <td>{{ $idx + 1 }}</td>
+                            <td class="left">{{ $item['product']['name'] ?? '' }}</td>
+                            <td>{{ $item['quantity'] ?? '' }}</td>
+                            <td>{{ $mrp !== null ? '₹' . number_format($mrp, 2) : '' }}</td>
+                            <td>{{ $discount_amt !== null ? '₹' . number_format($discount_amt, 2) : '' }}</td>
+                            <td>{{ $offer_rate !== null ? '₹' . number_format($offer_rate, 2) : '' }}</td>
+                            <td>₹{{ number_format((float) $item['total'], 2) }}</td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -186,15 +185,15 @@
                 </tr>
                 <tr>
                     <td style="text-align: right;">Total Amount</td>
-                    <td style="text-align: center;">{{ $order['sub_total'] }}</td>
+                    <td style="text-align: center;">{{ number_format((float) $order['sub_total'], 2) }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: right;">Discount</td>
-                    <td style="text-align: center;">{{ $order['discount_total'] }}</td>
+                    <td style="text-align: center;">{{ number_format((float) $order['discount_total'], 2) }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: right;">Net Total</td>
-                    <td style="text-align: center;">{{ $order['net_total'] }}</td>
+                    <td style="text-align: center;">{{ number_format((float) $order['net_total'], 2) }}</td>
                 </tr>
             </table>
         </div>

@@ -77,7 +77,7 @@
                       <td width="15%" style="text-align:right;vertical-align:middle;border-left:1px solid #eee;border-bottom:1px solid #eee;border-right:0;border-top:0">
                       {{ $item->quantity }}
                       </td>
-                      <td width="20%" style="text-align:right;vertical-align:middle;border-left:1px solid #eee;border-bottom:1px solid #eee;border-right:1px solid #eee;border-top:0"><span>{{ $item->total }}</span></td>
+                      <td width="20%" style="text-align:right;vertical-align:middle;border-left:1px solid #eee;border-bottom:1px solid #eee;border-right:1px solid #eee;border-top:0"><span>{{ number_format((float) $item->total, 2) }}</span></td>
                     </tr>
                     @endforeach
                   </tbody>
@@ -89,9 +89,9 @@
                     <tr>
                       <td valign="top">
                         <h4 style="font-size:24px;margin:0;padding:0;margin-bottom:10px; text-align:right;">Summary</h4>
-                        <p style="margin:0;margin-bottom:10px;padding:0; text-align:right;"><strong>Net Total :</strong> {{ $order['net_total'] }}</p>
-                        <p style="margin:0;margin-bottom:10px;padding:0; text-align:right;"><strong>Discount Total :</strong> {{ $order['discount_total'] }}</p>
-                        <p style="margin:0;margin-bottom:10px;padding:0; text-align:right;"><strong>Sub Total :</strong>{{ $order['sub_total'] }}</p>
+                        <p style="margin:0;margin-bottom:10px;padding:0; text-align:right;"><strong>Net Total :</strong> {{ number_format((float) $order['net_total'], 2) }}</p>
+                        <p style="margin:0;margin-bottom:10px;padding:0; text-align:right;"><strong>Discount Total :</strong> {{ number_format((float) $order['discount_total'], 2) }}</p>
+                        <p style="margin:0;margin-bottom:10px;padding:0; text-align:right;"><strong>Sub Total :</strong> {{ number_format((float) $order['sub_total'], 2) }}</p>
                       </td>
                      
                     </tr>
