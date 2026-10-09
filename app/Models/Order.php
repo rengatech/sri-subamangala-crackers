@@ -20,6 +20,12 @@ class Order extends Model
  
     protected $fillable = ['customer_id', 'net_total', 'discount_total', 'sub_total', 'address_id', 'status', 'lr_screenshot'];
 
+    protected $casts = [
+        'net_total' => 'decimal:2',
+        'discount_total' => 'decimal:2',
+        'sub_total' => 'decimal:2',
+    ];
+
     public function items()
     {
         return $this->hasMany(OrderItem::class);

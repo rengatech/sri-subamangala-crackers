@@ -38,6 +38,7 @@ class OrderController extends Controller
         foreach ($request->order_items as $item) {
             $orderTotal += $this->getItemTotal($item['id'], $item['quantity'], $discount);
         }
+        $orderTotal = round($orderTotal, 2);
 
         if ($orderTotal < $settings->min_order_value) {
             return back()->withErrors([
@@ -66,12 +67,16 @@ class OrderController extends Controller
 
         $order_items = [];
         foreach ($request->order_items as $item) {
-            array_push($order_items, ['product_id' => $item['id'], 'quantity' => $item['quantity'], 'total' => $this->getItemTotal($item['id'], $item['quantity'], $discount)]);
+            array_push($order_items, [
+                'product_id' => $item['id'],
+                'quantity' => $item['quantity'],
+                'total' => $this->getItemTotal($item['id'], $item['quantity'], $discount),
+            ]);
         }
 
         $items = $order->items()->createMany($order_items);
 
-        $net_total = $items->sum('total');
+        $net_total = round((float) $items->sum('total'), 2);
         $order->net_total = $net_total;
         $order->save();
 
@@ -103,12 +108,20 @@ class OrderController extends Controller
         return $string;
     }
 
+    /**
+     * Item total with exact 2-decimal precision (no whole-rupee rounding).
+     * Example: price 63, discount 55% => unit 28.35
+     */
     protected function getItemTotal($product_id, $quantity, $discount)
     {
         $product = Product::with('category')->find($product_id);
         $effective_discount = ($product && $product->category && $product->category->has_discount) ? $discount : 0;
 
-        return $quantity * round($product->price - round($product->price * $effective_discount / 100));
+        $price = (float) $product->price;
+        $discount_amount = round($price * $effective_discount / 100, 2);
+        $unit_price = round($price - $discount_amount, 2);
+
+        return round($quantity * $unit_price, 2);
     }
 
 

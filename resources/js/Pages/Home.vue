@@ -48,20 +48,26 @@ const removeItem = (product) => store.commit('removeItemFromCart', product)
 const deleteItem = (item) => store.commit('deleteFromCart', item)
 const clearCart = () => store.commit('clearCart')
 
-const discountAmount = (price, hasDiscount = true) => hasDiscount ? Math.round((price * props.global_discount) / 100) : 0
-const finalPrice = (price, hasDiscount = true) => price - discountAmount(price, hasDiscount)
+// ---- Exact price helpers (2 decimal precision, no whole-rupee rounding) ----
+const round2 = (n) => Math.round((Number(n) + Number.EPSILON) * 100) / 100
+const formatPrice = (n) => round2(n).toFixed(2)
+
+const discountAmount = (price, hasDiscount = true) =>
+    hasDiscount ? round2((Number(price) * props.global_discount) / 100) : 0
+const finalPrice = (price, hasDiscount = true) =>
+    round2(Number(price) - discountAmount(price, hasDiscount))
 
 const discountTotalAmount = computed(() => {
     let totalDiscount = 0;
     cartItems.value.forEach(item => {
         if (item.has_discount !== false) {
-            totalDiscount += Math.round((item.price * props.global_discount) / 100) * item.quantity
+            totalDiscount += discountAmount(item.price, true) * item.quantity
         }
     });
-    return totalDiscount;
+    return round2(totalDiscount);
 })
 const discountedTotal = computed(() =>
-    Math.round(totalPrice.value - discountTotalAmount.value)
+    round2(Number(totalPrice.value) - discountTotalAmount.value)
 )
 const canSubmit = computed(() => discountedTotal.value >= props.min_order_value)
 
@@ -270,7 +276,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
                                 <p v-if="product.tamil_name" class="text-xs text-gray-400">{{ product.tamil_name }}</p>
                                 <div class="mt-1 flex items-center gap-2">
                                     <span v-if="global_discount > 0 && category.has_discount" class="text-xs text-gray-400 line-through">₹{{ product.price }}</span>
-                                    <span :class="['text-sm font-bold', global_discount > 0 && category.has_discount ? 'text-green-600' : 'text-brand-dark']">₹{{ global_discount > 0 && category.has_discount ? finalPrice(product.price, category.has_discount) : product.price }}</span>
+                                    <span :class="['text-sm font-bold', global_discount > 0 && category.has_discount ? 'text-green-600' : 'text-brand-dark']">₹{{ global_discount > 0 && category.has_discount ? formatPrice(finalPrice(product.price, category.has_discount)) : product.price }}</span>
                                 </div>
                             </div>
                             <!-- Desktop: even 4-column grid -->
@@ -278,7 +284,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
                                 <p class="text-base font-semibold text-brand-dark truncate">{{ product.name }}</p>
                                 <p class="text-sm text-gray-500 truncate">{{ product.tamil_name || '—' }}</p>
                                 <span :class="['text-base whitespace-nowrap', global_discount > 0 && category.has_discount ? 'text-gray-400 line-through' : 'font-bold text-brand-dark']">₹{{ product.price }}</span>
-                                <span v-if="global_discount > 0 && category.has_discount" class="text-base font-bold text-green-600 whitespace-nowrap">₹{{ finalPrice(product.price, category.has_discount) }}</span>
+                                <span v-if="global_discount > 0 && category.has_discount" class="text-base font-bold text-green-600 whitespace-nowrap">₹{{ formatPrice(finalPrice(product.price, category.has_discount)) }}</span>
                             </div>
                         </div>
                         <!-- Right: Image with ADD overlay -->
@@ -368,10 +374,10 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
                                             <p class="text-sm font-medium text-brand-dark">{{ item.name }}</p>
                                             <div class="flex items-center gap-1.5">
                                                 <span v-if="global_discount > 0 && item.has_discount !== false" class="text-xs text-gray-400 line-through">₹{{ item.price }}</span>
-                                                <span class="text-xs" :class="global_discount > 0 && item.has_discount !== false ? 'text-green-600 font-medium' : 'text-gray-400'">₹{{ global_discount > 0 && item.has_discount !== false ? finalPrice(item.price, item.has_discount) : item.price }} each</span>
+                                                <span class="text-xs" :class="global_discount > 0 && item.has_discount !== false ? 'text-green-600 font-medium' : 'text-gray-400'">₹{{ global_discount > 0 && item.has_discount !== false ? formatPrice(finalPrice(item.price, item.has_discount)) : item.price }} each</span>
                                             </div>
                                         </div>
-                                        <p class="shrink-0 text-sm font-semibold">₹{{ global_discount > 0 && item.has_discount !== false ? finalPrice(item.price, item.has_discount) * item.quantity : item.price * item.quantity }}</p>
+                                        <p class="shrink-0 text-sm font-semibold">₹{{ global_discount > 0 && item.has_discount !== false ? formatPrice(finalPrice(item.price, item.has_discount) * item.quantity) : formatPrice(item.price * item.quantity) }}</p>
                                     </div>
                                     <div class="mt-2 flex items-center justify-between">
                                         <button
@@ -397,15 +403,15 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
                             <div class="mt-4 space-y-2 border-t pt-4 text-sm">
                                 <div class="flex justify-between">
                                     <span class="text-gray-500">MRP Total</span>
-                                    <span>₹{{ totalPrice }}</span>
+                                    <span>₹{{ formatPrice(totalPrice) }}</span>
                                 </div>
                                 <div class="flex justify-between text-green-600">
                                     <span>Discount ({{ global_discount }}%)</span>
-                                    <span>-₹{{ discountTotalAmount }}</span>
+                                    <span>-₹{{ formatPrice(discountTotalAmount) }}</span>
                                 </div>
                                 <div class="flex justify-between border-t pt-2 text-lg font-bold text-brand-dark">
                                     <span>Net Total</span>
-                                    <span>₹{{ discountedTotal }}</span>
+                                    <span>₹{{ formatPrice(discountedTotal) }}</span>
                                 </div>
                             </div>
 
@@ -475,7 +481,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
                                     </svg>
                                     Placing Order...
                                 </span>
-                                <span v-else>Place Order — ₹{{ discountedTotal }}</span>
+                                <span v-else>Place Order — ₹{{ formatPrice(discountedTotal) }}</span>
                             </button>
                             <p v-if="!canSubmit" class="animate-blink-color mt-3 rounded-lg bg-red-50 px-4 py-4 text-center text-base font-bold">
                                 <span>Minimum order value: ₹{{ min_order_value }}</span>
